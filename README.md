@@ -19,7 +19,7 @@ The game introduces new modes and physics-altering random events that ensure a c
 
 ### 2. Random Event System (Dynamic Gameplay)
 
-Gameplay is interrupted by spontaneous, time-limited events (lasting **5 to 10 seconds**), which alter physics, visuals, and scoring.
+Gameplay is interrupted by spontaneous, time-limited events (lasting **12 to 22 seconds**), which alter physics, visuals, and scoring.
 
 * **Moon Gravity Event**
     * **Physics:** Gravity is drastically reduced (`0.07`), and lift is weaker (`-3.0`), resulting in **slower descent** and **'floaty' jumps**. Physics values smoothly transition in and out using an easing factor (`0.005`) for a fluid effect.
