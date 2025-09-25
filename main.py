@@ -32,7 +32,13 @@ MOVING_PIPE_CHANCE = 0.5  # 5% chance to spawn a moving pipe
 DOUBLE_MOVING_PIPE_CHANCE = 0.5  # 50% chance to spawn a second moving pipe
 MOVING_PIPE_GAP = 150  # Wider gap for moving pipes
 BIRD_ROTATION_EASING = 0.02  # Adjusted: Easing factor for Moon Gravity random rotation
-GROUND_DARKENING_OPACITY = 0.35  # New: Opacity for the semi-transparent dark rectangle over the ground
+
+# --- Cloudy Sky Event Configuration Updates ---
+GROUND_DARKENING_OPACITY = 0.35  # Opacity for the semi-transparent dark rectangle over the ground
+SCREEN_DARKENING_OPACITY = 0.20  # New: Opacity for the dark blue screen overlay
+SCREEN_DARKENING_COLOR_R = 20  # New: Dark Blue Tint R
+SCREEN_DARKENING_COLOR_G = 20  # New: Dark Blue Tint G
+SCREEN_DARKENING_COLOR_B = 60  # New: Dark Blue Tint B
 
 # --- File Paths ---
 ASSETS_PATH = "assets"
@@ -142,11 +148,11 @@ class Bird:
                                                   self.target_pipe_control_velocity - self.pipe_control_velocity) * self.pipe_control_acceleration
             self.y += self.pipe_control_velocity
 
-            if self.y < 0:
-                self.y = 0
+            if self.y < 80:
+                self.y = 80
                 self.target_pipe_control_velocity = BIRD_PIPE_CONTROL_SPEED
-            elif self.y + self.height > WINDOW_HEIGHT - GROUND_HEIGHT:
-                self.y = WINDOW_HEIGHT - GROUND_HEIGHT - self.height
+            elif self.y + self.height > WINDOW_HEIGHT - GROUND_HEIGHT - 80:
+                self.y = WINDOW_HEIGHT - GROUND_HEIGHT - self.height - 80
                 self.target_pipe_control_velocity = -BIRD_PIPE_CONTROL_SPEED
 
         self.frame_timer += 1
@@ -378,12 +384,12 @@ class GameWindow(QMainWindow):
 
     # New: "Cloudy Sky" event specific variables
     CLOUDY_SKY_OVERLAY_OPACITY = 0.5
-    CLOUD_SPAWN_INTERVAL_MIN = 300  # milliseconds
-    CLOUD_SPAWN_INTERVAL_MAX = 600
+    CLOUD_SPAWN_INTERVAL_MIN = 80  # milliseconds
+    CLOUD_SPAWN_INTERVAL_MAX = 220
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Flappy Bird")
+        self.setWindowTitle("Flappy Bird: EXTENDED")
 
         # New: Set the window icon
         icon_path = os.path.join(SPRITES_PATH, 'yellowbird-midflap.png')
@@ -467,11 +473,16 @@ class GameWindow(QMainWindow):
         self.game_over_timer.setSingleShot(True)
         self.game_over_timer.timeout.connect(self.show_name_input_dialog)
 
+        # UPDATED: Added multiple foreground cloud layers (z_index 1) and increased their speed_factor.
         self.cloud_configs = [
-            {"z_index": 0, "speed_factor": 0.5, "size_factor": 0.8, "opacity": 0.6},
-            {"z_index": 0, "speed_factor": 0.7, "size_factor": 1.0, "opacity": 0.7},
-            {"z_index": 0, "speed_factor": 0.9, "size_factor": 1.2, "opacity": 0.8},
-            {"z_index": 1, "speed_factor": 0.3, "size_factor": 1.5, "opacity": 0.9}
+            # Background Layers (z_index: 0)
+            {"z_index": 0, "speed_factor": 0.5, "size_factor": 0.8, "opacity": 0.6, "sprite_path": CLOUDS_BG_PATH},
+            {"z_index": 0, "speed_factor": 0.7, "size_factor": 1.0, "opacity": 0.7, "sprite_path": CLOUDS_BG_PATH},
+            {"z_index": 0, "speed_factor": 0.9, "size_factor": 1.2, "opacity": 0.8, "sprite_path": CLOUDS_BG_PATH},
+            # Foreground Layer 1 (z_index: 1) - Faster
+            {"z_index": 1, "speed_factor": 1.2, "size_factor": 1.5, "opacity": 0.4, "sprite_path": CLOUDS_FG_PATH},
+            # Foreground Layer 2 (z_index: 1) - Even Faster, Larger
+            {"z_index": 1, "speed_factor": 1.8, "size_factor": 2.0, "opacity": 0.5, "sprite_path": CLOUDS_FG_PATH}
         ]
 
         # Ensure the 'data' directory exists for the leaderboard file
@@ -525,7 +536,7 @@ class GameWindow(QMainWindow):
     def spawn_pipe(self):
         if self.game_state in [GameState.ADVENTURE_MODE, GameState.PIPE_CONTROL_MODE]:
             # New: Check for a moving pipe spawn chance
-            if random.random() < MOVING_PIPE_CHANCE:
+            if self.game_state == GameState.ADVENTURE_MODE and random.random() < MOVING_PIPE_CHANCE:
                 gap_y = random.randint(self.PIPE_GAP_MIN_Y,
                                        WINDOW_HEIGHT - GROUND_HEIGHT - MOVING_PIPE_GAP - self.PIPE_GAP_MIN_Y)
                 new_pipe = MovingPipe(WINDOW_WIDTH, gap_y, MOVING_PIPE_GAP)
@@ -558,7 +569,8 @@ class GameWindow(QMainWindow):
             # Select animation type based on z_index
             animation_type = "y_ease" if config["z_index"] == 0 else "alpha_ease"
 
-            sprite_path = CLOUDS_BG_PATH if config["z_index"] == 0 else CLOUDS_FG_PATH
+            # Use sprite_path from config
+            sprite_path = config["sprite_path"]
 
             new_cloud = Cloud(
                 WINDOW_WIDTH, y,
@@ -691,11 +703,18 @@ class GameWindow(QMainWindow):
 
         self.ground.draw(painter, self.debug_mode)
 
-        # New: Darkening the ground during the Cloudy Sky event
+        # UPDATED: Darkening the whole screen and ground during the Cloudy Sky event
         if self.is_cloudy_sky_event:
+            # 1. Dark Blue Screen Overlay (Whole screen, less opaque)
+            painter.setBrush(QColor(SCREEN_DARKENING_COLOR_R, SCREEN_DARKENING_COLOR_G, SCREEN_DARKENING_COLOR_B))
+            painter.setOpacity(SCREEN_DARKENING_OPACITY)
+            painter.drawRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+
+            # 2. Darker Ground Overlay (Black, slightly higher opacity) - To make ground "slightly darker" than the screen
             painter.setOpacity(GROUND_DARKENING_OPACITY)
             painter.setBrush(QColor(0, 0, 0))
             painter.drawRect(0, WINDOW_HEIGHT - GROUND_HEIGHT, WINDOW_WIDTH, GROUND_HEIGHT)
+
             painter.setOpacity(1.0)  # Reset opacity after drawing the rect
 
         self.bird.draw(painter, self.debug_mode)
@@ -711,7 +730,7 @@ class GameWindow(QMainWindow):
             self.draw_main_menu_info(painter)
             painter.setPen(QColor(0, 0, 0))
             painter.setFont(QFont("Arial", 10))
-            painter.drawText(20, 400, "Toggles: E - Events, B - Debug")
+            painter.drawText(20, 30, "Toggles: E - Events, B - Debug")
 
         elif self.game_state == GameState.GAME_OVER:
             self.draw_leaderboard(painter)
@@ -754,8 +773,8 @@ class GameWindow(QMainWindow):
             # Updated debug key text
             painter.drawText(20, debug_legend_y + 12, "1: Moon Gravity")
             painter.drawText(20, debug_legend_y + 24, "2: Size Changer")
-            painter.drawText(110, debug_legend_y + 12, "3: Double Score")
-            painter.drawText(110, debug_legend_y + 24, "4: Cloudy Sky")
+            painter.drawText(120, debug_legend_y + 12, "3: Double Score")
+            painter.drawText(120, debug_legend_y + 24, "4: Cloudy Sky")
 
     def draw_event_bar(self, painter):
         max_bar_width = WINDOW_WIDTH - 40
@@ -798,47 +817,70 @@ class GameWindow(QMainWindow):
             painter.drawPixmap(int(x_start), 50, sprite)
             x_start += sprite.width()
 
+    # --- START OF IMPLEMENTED FUNCTIONS (FIX) ---
     def draw_main_menu_info(self, painter):
         painter.setPen(QColor(0, 0, 0))
-        font = QFont("Arial", 16)
-        font.setBold(True)
+        font = QFont("Arial", 14, QFont.Bold)
         painter.setFont(font)
 
-        mode_text = "Current Mode: " + (
-            "Adventure" if self.current_menu_mode == GameState.ADVENTURE_MODE else "Pipe Control")
-        painter.drawText(20, 300, mode_text)
-        painter.drawText(20, 320, "Press 'C' to Change Mode")
+        # Display current mode
+        mode_text = f"Mode: {'Adventure' if self.current_menu_mode == GameState.ADVENTURE_MODE else 'Pipe Control'}"
+        mode_rect = QRect(0, self.LEADERBOARD_INFO_Y - 50, WINDOW_WIDTH, 20)
+        painter.drawText(mode_rect, Qt.AlignCenter, mode_text)
+        painter.setFont(QFont("Arial", 10))
+        painter.drawText(QRect(0, self.LEADERBOARD_INFO_Y - 30, WINDOW_WIDTH, 20), Qt.AlignCenter, "(C to switch mode)")
 
-        painter.drawText(20, 350, f"Current Skin: {self.bird.color.capitalize()}")
-        painter.drawText(20, 370, "Press 'S' to Change Skin")
+        # Display current skin
+        skin_text = f"Skin: {self.skins[self.current_skin_index].capitalize()} Bird"
+        skin_rect = QRect(0, self.LEADERBOARD_INFO_Y, WINDOW_WIDTH, 20)
+        painter.setFont(font)
+        painter.drawText(skin_rect, Qt.AlignCenter, skin_text)
+        painter.setFont(QFont("Arial", 10))
+        painter.drawText(QRect(0, self.LEADERBOARD_INFO_Y + 20, WINDOW_WIDTH, 20), Qt.AlignCenter, "(S to switch skin)")
+
+        # Display high score on menu
+        high_score_text = f"Best Score: {self.leaderboard[0]['score']}" if self.leaderboard else "Best Score: 0"
+        high_score_rect = QRect(0, self.LEADERBOARD_INFO_Y + 50, WINDOW_WIDTH, 20)
+        painter.setFont(font)
+        painter.drawText(high_score_rect, Qt.AlignCenter, high_score_text)
+
 
     def draw_leaderboard(self, painter):
-        if self.leaderboard:
-            painter.setPen(QColor(0, 0, 0))
+        # 1. Draw the Game Over image (at the top)
+        game_over_x = int((WINDOW_WIDTH - self.game_over_image.width()) / 2)
+        painter.drawPixmap(game_over_x, self.GAME_OVER_TEXT_Y, self.game_over_image)
 
-            font_title = QFont("Arial", 16)
-            font_title.setBold(True)
-            painter.setFont(font_title)
+        # 2. Draw the Score Text
+        painter.setPen(QColor(0, 0, 0))
+        score_font = QFont("Arial", 16, QFont.Bold)
+        painter.setFont(score_font)
+        score_text = f"Your Score: {self.score}"
+        score_rect = QRect(0, self.GAME_OVER_TEXT_Y + self.game_over_image.height() + 10, WINDOW_WIDTH, 30)
+        painter.drawText(score_rect, Qt.AlignCenter, score_text)
 
-            title_text = "Leaderboard"
-            title_width = painter.fontMetrics().boundingRect(title_text).width()
-            title_x = int((WINDOW_WIDTH - title_width) / 2)
+        # 3. Draw the Leaderboard Title
+        leaderboard_title_font = QFont("Arial", 14, QFont.Bold)
+        painter.setFont(leaderboard_title_font)
+        leaderboard_title = "--- TOP SCORES ---"
+        title_y = score_rect.bottom() + 10
+        painter.drawText(QRect(0, title_y, WINDOW_WIDTH, 20), Qt.AlignCenter, leaderboard_title)
 
-            num_entries = len(self.leaderboard)
-            entry_height = painter.fontMetrics().height() + 5
-            total_height = num_entries * entry_height
+        # 4. Draw the Leaderboard Entries
+        entry_font = QFont("Arial", 12)
+        painter.setFont(entry_font)
+        start_y = title_y + self.LEADERBOARD_Y_OFFSET + 5 # Start below the title
+        for i, entry in enumerate(self.leaderboard):
+            y_pos = start_y + i * self.LEADERBOARD_Y_OFFSET
+            text = f"{i + 1}. {entry['name']}: {entry['score']}"
+            painter.drawText(QRect(0, y_pos, WINDOW_WIDTH, 20), Qt.AlignCenter, text)
 
-            leaderboard_start_y = int((WINDOW_HEIGHT - total_height) / 2)
-
-            painter.drawText(title_x, leaderboard_start_y - 20, title_text)
-
-            painter.setFont(QFont("Arial", 12))
-
-            for i, entry in enumerate(self.leaderboard):
-                text = f"{i + 1}. {entry['name']}: {entry['score']}"
-                text_width = painter.fontMetrics().boundingRect(text).width()
-                text_x = int((WINDOW_WIDTH - text_width) / 2)
-                painter.drawText(text_x, leaderboard_start_y + i * entry_height, text)
+        # 5. Draw the "Press R to Restart" message
+        restart_font = QFont("Arial", 12, QFont.Bold)
+        painter.setFont(restart_font)
+        restart_text = "Press R to Restart"
+        restart_y = start_y + len(self.leaderboard) * self.LEADERBOARD_Y_OFFSET + 30
+        painter.drawText(QRect(0, restart_y, WINDOW_WIDTH, 20), Qt.AlignCenter, restart_text)
+    # --- END OF IMPLEMENTED FUNCTIONS (FIX) ---
 
     def update_game(self):
         if time.time() - self.background_last_switch_time > self.BACKGROUND_CYCLE_SECONDS:
