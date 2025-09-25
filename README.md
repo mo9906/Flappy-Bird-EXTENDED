@@ -15,7 +15,7 @@ The game introduces new modes and physics-altering random events that ensure a c
 | Mode | Description | Mechanic |
 | :--- | :--- | :--- |
 | **Adventure Mode** | The classic experience. Players tap/flap to fly through pipes. | Player controls bird's vertical movement. |
-| **Pipe Control Mode** | A challenging inversion. The **bird moves randomly** up and down with smooth easing, and the player **controls the pipes' vertical position** with the mouse to guide the bird through the gap. | Player controls pipes' vertical movement (mouse). |
+| **Pipe Control Mode** | A challenging inversion. The **bird moves randomly** up and down with smooth easing, and the player **controls the pipes' vertical position** with the mouse to guide the bird through the gap. | Player controls pipes' vertical movement (using the mouse cursor). |
 
 ### 2. Random Event System (Dynamic Gameplay)
 
