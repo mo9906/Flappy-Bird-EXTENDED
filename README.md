@@ -1,6 +1,6 @@
 # Flappy Bird: **Extended Edition**
 
-This is an extended, feature-rich clone of the classic Flappy Bird game, built using **Python** with the **PyQt5** framework for graphics and **`pygame.mixer`** for sound management. The project aims to enhance the core gameplay with modern "Game Feel" adjustments and introduces a dynamic, high-impact event system.
+This is an extended, feature-rich clone of the classic Flappy Bird game built in **Python** with the **PyQt5** framework for graphics and **`pygame.mixer`** for sound management. The project aims to enhance the core gameplay with modern "Game Feel" adjustments and introduces a dynamic, high-impact event system.
 
 ## 🚀 Project Overview
 
@@ -22,26 +22,26 @@ The game introduces new modes and physics-altering random events that ensure a c
 Gameplay is interrupted by spontaneous, time-limited events (lasting **5 to 10 seconds**), which alter physics, visuals, and scoring.
 
 * **Moon Gravity Event**
-    * **Physics:** Gravity is drastically reduced (`0.07`), and lift is weaker (`-3.0`), resulting in **slower descent** and **'floaty' jumps**. Physics values smoothly transition in and out for a fluid effect.
-    * **Visual Feel:** The bird's rotation randomly eases towards a new angle, creating an **uncontrollable, wobbly drift** effect typical of low gravity.
+    * **Physics:** Gravity is drastically reduced (`0.07`), and lift is weaker (`-3.0`), resulting in **slower descent** and **'floaty' jumps**. Physics values smoothly transition in and out using an easing factor (`0.005`) for a fluid effect.
+    * **Visual Feel:** The bird's rotation randomly eases towards a new angle using an easing factor (`0.02`), creating an **uncontrollable, wobbly drift** effect typical of low gravity.
     * **Level Design:** Pipe gaps are widened (`120` pixels) to compensate for the erratic movement.
 * **Cloudy Sky Event**
     * **Atmosphere:** A detailed, multilayered **parallax cloud system** is generated.
-    * **Visual Feel:** **Background clouds** use a **bottom-to-up easing animation** (`y_ease`) to appear on screen. **Foreground clouds** use a **rising alpha animation** (`alpha_ease`) to fade in from zero to half opacity. After appearing, all clouds scroll at different speeds.
+    * **Visual Feel:** **Background clouds** use a **bottom-to-up easing animation** (`y_ease`) to appear on screen. **Foreground clouds** use a **rising alpha animation** (`alpha_ease`) to fade in from zero to half opacity.
     * **Ground Darkening:** A semi-transparent black overlay is drawn over the ground area (`GROUND_DARKENING_OPACITY = 0.35`) to create a darker, moodier atmosphere.
 * **Size Changer Event:** The bird is scaled up by **1.5x**, and the pipe gap is proportionally increased for a challenge that requires more precise timing with a larger hitbox.
 * **Double Score Event:** All points earned during the event are multiplied by **2**.
 
 ### 3. Advanced Obstacles & Scoring
 
-* **Moving Pipes:** Pipes have a **50% chance** to spawn with a **vertical oscillating motion** (sine wave) for unpredictable positioning. A second moving pipe may also spawn.
-* **Special Pipes (Red Pipes):** Pipes have a **20% chance** to spawn as a special pipe. Passing a Special Pipe rewards **5 points** instead of the standard 1 point.
+* **Moving Pipes:** Pipes have a **50% chance** (`MOVING_PIPE_CHANCE = 0.5`) to spawn with a **vertical oscillating motion** (sine wave) with an amplitude of 80 pixels. A second moving pipe may also spawn with a **50% chance** (`DOUBLE_MOVING_PIPE_CHANCE = 0.5`).
+* **Special Pipes (Red Pipes):** Pipes have a **20% chance** (`SPECIAL_PIPE_CHANCE = 0.2`) to spawn as a special pipe. Passing a Special Pipe rewards **5 points** instead of the standard 1 point.
 * **Persistent Leaderboard:** The **Top 5** high scores are saved to a local JSON file (`data/leaderboard.json`).
 
 ### 4. Visual & Technical Polish
 
-* **Day/Night Cycle:** The background smoothly transitions between Day and Night textures every **12 seconds** using a **12-second crossfade** for an atmospheric visual effect.
-* **Parallax Scrolling:** The main background scrolls horizontally at a slower speed (`0.5`) than the pipes, maintaining a consistent illusion of depth.
+* **Day/Night Cycle:** The background smoothly transitions between Day and Night textures every **12 seconds** using a **12-second crossfade** (`FADE_DURATION = 12.0`).
+* **Parallax Scrolling:** The main background scrolls horizontally at a slower speed (`0.5`) than the pipes, maintaining a consistent illusion of depth (`BACKGROUND_SCROLL_SPEED = 0.5`).
 
 ---
 
@@ -49,9 +49,26 @@ Gameplay is interrupted by spontaneous, time-limited events (lasting **5 to 10 s
 
 | Action | Control (Key) | Game Mode |
 | :--- | :--- | :--- |
-| **Flap** | **Spacebar** | Adventure Mode |
+| **Flap** | **Spacebar** / **Up Arrow** | Adventure Mode |
 | **Control Pipes** | **Mouse Move** | Pipe Control Mode |
 | **Pause/Unpause** | **P** | All Modes |
 | **Toggle Debug** | **B** | All Modes |
 | **Change Skin** | **S** (Main Menu) | Main Menu |
 | **Change Mode** | **C** (Main Menu) | Main Menu |
+
+---
+
+## 💻 Installation and Setup
+
+This project is written in Python and requires the **PyQt5** and **Pygame** libraries.
+
+#### **1. Prerequisites**
+
+Ensure you have **Python 3.6 or newer** installed on your system.
+
+#### **2. Install Dependencies**
+
+Open your terminal or command prompt and use `pip` to install the required libraries:
+
+```bash
+pip install PyQt5 pygame
