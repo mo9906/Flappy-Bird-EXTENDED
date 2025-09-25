@@ -5,7 +5,7 @@ This is an extended, feature-rich clone of the classic Flappy Bird game built in
 ## 🚀 Project Overview
 
 The game introduces new modes and physics-altering random events that ensure a constantly challenging and engaging experience. High scores are saved locally, and the visual design features a smooth Day/Night cycle and complex parallax effects.
-
+[![Flappy Bird: EXTENDED](https://img.youtube.com/vi/XWMauWxiyX4/maxresdefault.jpg)](https://www.youtube.com/watch?v=XWMauWxiyX4)
 ---
 
 ## ✨ Key Features & Game Feel Enhancements
