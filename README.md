@@ -70,12 +70,10 @@ Ensure you have **Python 3.6 or newer** installed on your system.
 
 Open your terminal or command prompt and use `pip` to install the required libraries:
 
-```bash
-pip install PyQt5 pygame```
+```pip install PyQt5 pygame```
 
 #### **3. Running the Game**
 
 Once the dependencies are installed, you can launch the game directly by executing the main script from your terminal:
 
-```bash
-python main.py```
+```python main.py```
