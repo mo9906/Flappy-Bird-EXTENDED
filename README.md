@@ -1,10 +1,10 @@
 # Flappy Bird: **Extended Edition**
 
-This is an extended, feature-rich clone of the classic Flappy Bird game built in **Python** with the **PyQt5** framework for graphics and **`pygame.mixer`** for sound management. The project aims to enhance the core gameplay with modern "Game Feel" adjustments and introduces a dynamic, high-impact event system.
+This is an extended, feature-rich clone of the classic Flappy Bird game built in **Python** with the **PyQt5** framework for graphics and the dedicated **`pygame.mixer`** library for sound management. The project aims to enhance the core gameplay with modern "Game Feel" adjustments, sophisticated visual effects, and a dynamic, high-impact random event system that radically alters gameplay on the fly. The architectural choice to combine **PyQt5** for the core application, window, and robust UI management with **`pygame.mixer`** for low-latency sound effect playback and music looping allows for an interface that is both responsive and visually appealing, moving beyond the capabilities of simpler game libraries.
 
 ## 🚀 Project Overview
 
-The game introduces new modes and physics-altering random events that ensure a constantly challenging and engaging experience. High scores are saved locally, and the visual design features a smooth Day/Night cycle and complex parallax effects.
+The game introduces challenging new modes and physics-altering random events that ensure a constantly challenging and engaging experience. This dynamic system prevents the monotonous repetition often found in endless runners, turning each play session into a unique gauntlet that tests both reflexes and adaptation skills. High scores are saved persistently and loaded locally via JSON, ensuring player progress is tracked across sessions. Furthermore, the visual design features a smooth Day/Night cycle and complex multilayered parallax effects that contribute significantly to the game's polished look and feel. The overall design philosophy centers on injecting unpredictable chaos into a simple, precise gameplay loop.
 [![Flappy Bird: EXTENDED](https://img.youtube.com/vi/XWMauWxiyX4/maxresdefault.jpg)](https://www.youtube.com/watch?v=XWMauWxiyX4)
 ---
 
