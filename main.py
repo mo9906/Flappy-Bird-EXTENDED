@@ -365,8 +365,8 @@ class GameWindow(QMainWindow):
     MOON_GRAVITY_PIPE_GAP_HEIGHT = 120
 
     # --- Random Event Configuration ---
-    EVENT_DURATION_MIN = 5.0  # seconds
-    EVENT_DURATION_MAX = 10.0  # seconds
+    EVENT_DURATION_MIN = 12.0  # seconds
+    EVENT_DURATION_MAX = 22.0  # seconds
     EVENT_INTERVAL_MIN = 3.0  # seconds
     EVENT_INTERVAL_MAX = 8.0  # seconds
 
