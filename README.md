@@ -77,5 +77,5 @@ pip install PyQt5 pygame```
 
 Once the dependencies are installed, you can launch the game directly by executing the main script from your terminal:
 
-```bach
+```bash
 python main.py```
